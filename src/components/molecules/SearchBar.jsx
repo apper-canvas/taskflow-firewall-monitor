@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
-import AppIcon from "@/components/atoms/AppIcon";
-const SearchBar = ({ 
+import ApperIcon from "@/components/ApperIcon";
+const SearchBar = ({
   onSearch, 
   placeholder = "Search tasks...", 
   className = '',
@@ -50,7 +50,7 @@ const SearchBar = ({
             onClick={handleClear}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <AppIcon name="X" size={16} />
+            <ApperIcon name="X" size={16} />
           </button>
         )}
       </div>
