@@ -101,8 +101,8 @@ const TaskCard = ({
           onCancel={() => setIsEditing(false)}
           mode="edit"
         />
-      ) : (
-<>
+) : (
+        <>
           {/* Task Header */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3 flex-1">
@@ -191,9 +191,9 @@ const TaskCard = ({
                 </div>
               </div>
             </div>
-          </>
-        )}
-        
+          </div>
+        </>
+      )}
         {/* Delete Confirmation Modal */}
         <AnimatePresence>
           {showDeleteConfirm && (
@@ -237,57 +237,9 @@ const TaskCard = ({
                   </Button>
                 </div>
               </motion.div>
-            </motion.div>
+</motion.div>
           )}
         </AnimatePresence>
-</motion.div>
-      
-      {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {showDeleteConfirm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            onClick={() => setShowDeleteConfirm(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-lg p-6 max-w-sm mx-4"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center mb-4">
-                <ApperIcon name="AlertTriangle" size={20} className="text-red-500 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900">Delete Task</h3>
-              </div>
-              
-              <p className="text-gray-600 mb-6">
-                Are you sure you want to delete "{task.title}"? This action cannot be undone.
-              </p>
-              
-              <div className="flex space-x-3">
-                <Button
-                  variant="danger"
-                  onClick={handleDelete}
-                  className="flex-1"
-                >
-                  Delete
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   )
 }
