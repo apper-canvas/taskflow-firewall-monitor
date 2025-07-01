@@ -43,8 +43,6 @@ const [errors, setErrors] = useState({})
     }
   }
 
-  const handlePrioritySelect = (priority) => {
-    setFormData(prev => ({ ...prev, priority }))
 const handlePrioritySelect = (priority) => {
     setFormData(prev => ({ ...prev, priority }))
   }
@@ -110,7 +108,9 @@ const handlePrioritySelect = (priority) => {
       newErrors.dueDate = 'Due date cannot be in the past'
     }
 
-    setErrors(newErrors)
+setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
