@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { format, isPast, isToday, isTomorrow } from "date-fns";
 import { toast } from "react-toastify";
+import ReactMarkdown from "react-markdown";
 import { formatDueDate, getDueDateColor } from "@/utils/dateHelpers";
 import { getPriorityIcon } from "@/utils/taskHelpers";
 import ApperIcon from "@/components/ApperIcon";
@@ -136,13 +137,14 @@ const TaskCard = ({
                     }`}>
                       {task.title}
                     </h3>
-                    
-                    {task.description && (
-                      <p className={`text-sm text-gray-600 mt-1 ${
+{task.description && (
+                      <div className={`text-sm text-gray-600 mt-1 ${
                         task.completed ? 'line-through' : ''
                       }`}>
-                        {task.description}
-                      </p>
+                        <div className="prose prose-sm max-w-none">
+                          <ReactMarkdown>{task.description}</ReactMarkdown>
+                        </div>
+                      </div>
                     )}
                   </div>
                   

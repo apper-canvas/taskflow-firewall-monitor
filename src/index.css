@@ -69,3 +69,65 @@
 .Toastify__progress-bar {
   background: rgba(255, 255, 255, 0.7);
 }
+
+/* Markdown Editor Styles */
+.markdown-editor {
+  @apply border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 transition-colors duration-200;
+}
+
+.markdown-toolbar {
+  @apply flex items-center space-x-1 p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg;
+}
+
+.markdown-toolbar button {
+  @apply p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors;
+}
+
+.markdown-toolbar button.active {
+  @apply text-primary-600 bg-primary-100;
+}
+
+.markdown-content {
+  @apply min-h-[100px] p-3 focus:outline-none resize-none;
+}
+
+.markdown-preview {
+  @apply min-h-[100px] p-3 prose prose-sm max-w-none;
+}
+
+/* Custom Prose Styles for Markdown */
+.prose {
+  @apply text-gray-700;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply text-gray-900 font-display;
+}
+
+.prose strong {
+  @apply text-gray-900 font-semibold;
+}
+
+.prose a {
+  @apply text-primary-600 hover:text-primary-700;
+}
+
+.prose code {
+  @apply text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded text-sm;
+}
+
+.prose pre {
+  @apply bg-gray-50 border border-gray-200;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-primary-200 bg-primary-50 text-gray-700;
+}
+
+.prose ul, .prose ol {
+  @apply text-gray-700;
+}
+
+.prose li {
+  @apply text-gray-700;
+}

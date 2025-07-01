@@ -67,7 +67,9 @@ export default {
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
       },
-    },
+},
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }
