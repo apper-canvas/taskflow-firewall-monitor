@@ -78,16 +78,17 @@ const TaskList = ({
         const taskDate = new Date(task.dueDate)
         
         return filters.date.some(dateFilter => {
-          switch (dateFilter) {
+switch (dateFilter) {
             case 'today':
               return isToday(taskDate)
             case 'tomorrow':
               return isTomorrow(taskDate)
             case 'overdue':
               return isPast(taskDate) && !isToday(taskDate)
-            case 'this-week':
+            case 'this-week': {
               const now = new Date()
               return taskDate >= startOfWeek(now) && taskDate <= endOfWeek(now)
+            }
             default:
               return false
           }
@@ -99,16 +100,17 @@ const TaskList = ({
     filtered.sort((a, b) => {
       let aValue, bValue
 
-      switch (sortBy) {
+switch (sortBy) {
         case 'title':
           aValue = a.title.toLowerCase()
           bValue = b.title.toLowerCase()
           break
-        case 'priority':
+        case 'priority': {
           const priorityOrder = { high: 3, medium: 2, low: 1 }
           aValue = priorityOrder[a.priority] || 0
           bValue = priorityOrder[b.priority] || 0
           break
+        }
         case 'dueDate':
           aValue = a.dueDate ? new Date(a.dueDate).getTime() : 0
           bValue = b.dueDate ? new Date(b.dueDate).getTime() : 0
