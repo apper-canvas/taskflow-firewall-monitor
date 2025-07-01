@@ -14,9 +14,10 @@ const Dashboard = () => {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
+const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('all')
   const [showTaskForm, setShowTaskForm] = useState(false)
+  const [selectedTasks, setSelectedTasks] = useState([])
 
   // Load initial data
   useEffect(() => {
@@ -90,8 +91,49 @@ const Dashboard = () => {
       toast.error('Failed to update task')
       throw error
     }
+}
+
+  // Bulk operations
+  const handleBulkComplete = async (taskIds, completed) => {
+    try {
+      await taskService.bulkComplete(taskIds, completed)
+      setTasks(prev => prev.map(task => 
+        taskIds.includes(task.Id) ? { ...task, completed } : task
+      ))
+      setSelectedTasks([])
+      toast.success(`${taskIds.length} task(s) ${completed ? 'completed' : 'marked as pending'}`)
+    } catch (error) {
+      toast.error('Failed to update tasks')
+      throw error
+    }
   }
 
+  const handleBulkDelete = async (taskIds) => {
+    try {
+      await taskService.bulkDelete(taskIds)
+      setTasks(prev => prev.filter(task => !taskIds.includes(task.Id)))
+      setSelectedTasks([])
+      toast.success(`${taskIds.length} task(s) deleted successfully`)
+    } catch (error) {
+      toast.error('Failed to delete tasks')
+      throw error
+    }
+  }
+
+  const handleBulkMoveCategory = async (taskIds, categoryId) => {
+    try {
+      await taskService.bulkUpdateCategory(taskIds, categoryId)
+      setTasks(prev => prev.map(task => 
+        taskIds.includes(task.Id) ? { ...task, categoryId } : task
+      ))
+      setSelectedTasks([])
+      const categoryName = categories.find(cat => cat.Id === categoryId)?.name || 'Unknown Category'
+      toast.success(`${taskIds.length} task(s) moved to ${categoryName}`)
+    } catch (error) {
+      toast.error('Failed to move tasks')
+      throw error
+    }
+  }
   // Category operations
   const handleCategoryCreate = async (categoryData) => {
     try {
@@ -194,7 +236,7 @@ const Dashboard = () => {
 
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto">
+<div className="max-w-4xl mx-auto">
             <TaskList
               tasks={tasks}
               categories={categories}
@@ -206,6 +248,11 @@ const Dashboard = () => {
               onRetry={loadData}
               searchQuery={searchQuery}
               activeCategory={activeCategory}
+              selectedTasks={selectedTasks}
+              onTaskSelect={setSelectedTasks}
+              onBulkComplete={handleBulkComplete}
+              onBulkDelete={handleBulkDelete}
+              onBulkMoveCategory={handleBulkMoveCategory}
             />
           </div>
 

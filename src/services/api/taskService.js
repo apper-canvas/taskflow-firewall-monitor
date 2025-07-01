@@ -91,7 +91,77 @@ class TaskService {
     await this.delay()
     return this.tasks
       .filter(task => !task.completed)
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  }
+
+  // Bulk operations
+  async bulkComplete(taskIds, completed) {
+    await this.delay()
+    
+    const validIds = taskIds.map(id => parseInt(id)).filter(id => !isNaN(id))
+    const updatedTasks = []
+    
+    for (const id of validIds) {
+      const taskIndex = this.tasks.findIndex(task => task.Id === id)
+      if (taskIndex !== -1) {
+        this.tasks[taskIndex] = {
+          ...this.tasks[taskIndex],
+          completed
+        }
+        updatedTasks.push({ ...this.tasks[taskIndex] })
+      }
+    }
+    
+    if (updatedTasks.length === 0) {
+      throw new Error('No valid tasks found for bulk completion')
+    }
+    
+    return updatedTasks
+  }
+
+  async bulkDelete(taskIds) {
+    await this.delay()
+    
+    const validIds = taskIds.map(id => parseInt(id)).filter(id => !isNaN(id))
+    let deletedCount = 0
+    
+    for (const id of validIds) {
+      const taskIndex = this.tasks.findIndex(task => task.Id === id)
+      if (taskIndex !== -1) {
+        this.tasks.splice(taskIndex, 1)
+        deletedCount++
+      }
+    }
+    
+    if (deletedCount === 0) {
+      throw new Error('No valid tasks found for bulk deletion')
+    }
+    
+    return { deletedCount }
+  }
+
+  async bulkUpdateCategory(taskIds, categoryId) {
+    await this.delay()
+    
+    const validIds = taskIds.map(id => parseInt(id)).filter(id => !isNaN(id))
+    const updatedTasks = []
+    
+    for (const id of validIds) {
+      const taskIndex = this.tasks.findIndex(task => task.Id === id)
+      if (taskIndex !== -1) {
+        this.tasks[taskIndex] = {
+          ...this.tasks[taskIndex],
+          categoryId: categoryId === 'none' ? null : categoryId
+        }
+        updatedTasks.push({ ...this.tasks[taskIndex] })
+      }
+    }
+    
+    if (updatedTasks.length === 0) {
+      throw new Error('No valid tasks found for bulk category update')
+    }
+    
+    return updatedTasks
   }
 }
 

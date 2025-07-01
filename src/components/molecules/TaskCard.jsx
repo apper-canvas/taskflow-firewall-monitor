@@ -1,55 +1,31 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { format, isToday, isPast, isTomorrow } from 'date-fns'
-import { toast } from 'react-toastify'
-import Checkbox from '@/components/atoms/Checkbox'
-import Badge from '@/components/atoms/Badge'
-import Button from '@/components/atoms/Button'
-import ApperIcon from '@/components/ApperIcon'
-import TaskForm from '@/components/organisms/TaskForm'
+import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { format, isPast, isToday, isTomorrow } from "date-fns";
+import { toast } from "react-toastify";
+import { formatDueDate, getDueDateColor } from "@/utils/dateHelpers";
+import { getPriorityIcon } from "@/utils/taskHelpers";
+import ApperIcon from "@/components/ApperIcon";
+import TaskForm from "@/components/organisms/TaskForm";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import Checkbox from "@/components/atoms/Checkbox";
 
 const TaskCard = ({ 
   task, 
-  category,
+  category, 
   onUpdate, 
-  onDelete,
-  onComplete,
+  onDelete, 
+  onComplete, 
+  selected = false,
+  onSelect,
   className = '' 
 }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  const formatDueDate = (date) => {
-    if (!date) return null
-    
-    const taskDate = new Date(date)
-    if (isToday(taskDate)) return 'Today'
-    if (isTomorrow(taskDate)) return 'Tomorrow'
-    if (isPast(taskDate) && !isToday(taskDate)) return `Overdue - ${format(taskDate, 'MMM d')}`
-    return format(taskDate, 'MMM d, yyyy')
-  }
-
-  const getDueDateColor = (date) => {
-    if (!date) return 'text-gray-500'
-    
-    const taskDate = new Date(date)
-    if (isPast(taskDate) && !isToday(taskDate)) return 'text-red-600'
-    if (isToday(taskDate)) return 'text-amber-600'
-    return 'text-gray-600'
-  }
-
-  const getPriorityIcon = (priority) => {
-    switch (priority) {
-      case 'high': return 'AlertCircle'
-      case 'medium': return 'Circle'
-      case 'low': return 'Minus'
-      default: return 'Circle'
-    }
-  }
-
   const handleComplete = async () => {
     try {
-      await onComplete(task.Id, !task.completed)
+      await onComplete(task.id, !task.completed)
       toast.success(task.completed ? 'Task marked as incomplete' : 'Task completed! 🎉')
     } catch (error) {
       toast.error('Failed to update task')
@@ -62,7 +38,7 @@ const TaskCard = ({
 
   const handleSave = async (updatedTask) => {
     try {
-      await onUpdate(task.Id, updatedTask)
+      await onUpdate(task.id, updatedTask)
       setIsEditing(false)
       toast.success('Task updated successfully')
     } catch (error) {
@@ -70,9 +46,27 @@ const TaskCard = ({
     }
   }
 
+  const handleCardClick = (e) => {
+    // Prevent selection when clicking on interactive elements
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('[role="button"]')) {
+      return
+    }
+    
+    if (onSelect) {
+      onSelect(!selected)
+    }
+  }
+
+  const handleCheckboxChange = (e) => {
+    e.stopPropagation()
+    if (onSelect) {
+      onSelect(!selected)
+    }
+  }
+
   const handleDelete = async () => {
     try {
-      await onDelete(task.Id)
+      await onDelete(task.id)
       setShowDeleteConfirm(false)
       toast.success('Task deleted successfully')
     } catch (error) {
@@ -80,31 +74,52 @@ const TaskCard = ({
     }
   }
 
+  // Use imported utility functions instead of local duplicates
   const dueDateText = formatDueDate(task.dueDate)
   const dueDateColor = getDueDateColor(task.dueDate)
 
   return (
-    <AnimatePresence>
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className={`card p-4 ${task.completed ? 'opacity-75' : ''} ${className}`}
-      >
-        {isEditing ? (
-          <TaskForm
-            task={task}
-            onSave={handleSave}
-            onCancel={() => setIsEditing(false)}
-            mode="edit"
-          />
-        ) : (
-          <>
-            <div className="flex items-start space-x-3">
+<motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      onClick={handleCardClick}
+      className={`group bg-white rounded-lg border transition-all duration-200 p-6 cursor-pointer
+        ${selected 
+          ? 'border-primary-300 bg-primary-50 shadow-md' 
+          : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+        } 
+        ${task.completed ? 'opacity-75' : ''} 
+        ${className}`}
+    >
+      {isEditing ? (
+        <TaskForm
+          task={task}
+          category={category}
+          onSave={handleSave}
+          onCancel={() => setIsEditing(false)}
+          mode="edit"
+        />
+      ) : (
+<>
+          {/* Task Header */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center space-x-3 flex-1">
+              {/* Selection Checkbox */}
+              {onSelect && (
+                <Checkbox
+                  checked={selected}
+                  onChange={handleCheckboxChange}
+                  size="sm"
+                  className="flex-shrink-0"
+                />
+              )}
+              
+              {/* Completion Checkbox */}
               <motion.div
                 whileTap={{ scale: 0.9 }}
-                className="mt-1"
+                className="flex-shrink-0"
               >
                 <Checkbox
                   checked={task.completed}
@@ -225,8 +240,55 @@ const TaskCard = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
-    </AnimatePresence>
+</motion.div>
+      
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-lg p-6 max-w-sm mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center mb-4">
+                <ApperIcon name="AlertTriangle" size={20} className="text-red-500 mr-2" />
+                <h3 className="text-lg font-semibold text-gray-900">Delete Task</h3>
+              </div>
+              
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete "{task.title}"? This action cannot be undone.
+              </p>
+              
+              <div className="flex space-x-3">
+                <Button
+                  variant="danger"
+                  onClick={handleDelete}
+                  className="flex-1"
+                >
+                  Delete
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }
 

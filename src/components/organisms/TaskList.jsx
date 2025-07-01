@@ -8,6 +8,8 @@ import ApperIcon from '@/components/ApperIcon'
 import Loading from '@/components/ui/Loading'
 import Error from '@/components/ui/Error'
 import Empty from '@/components/ui/Empty'
+import BulkActionsToolbar from '@/components/organisms/BulkActionsToolbar'
+import Checkbox from '@/components/atoms/Checkbox'
 
 const TaskList = ({ 
   tasks = [],
@@ -20,6 +22,11 @@ const TaskList = ({
   onRetry,
   searchQuery = '',
   activeCategory = 'all',
+  selectedTasks = [],
+  onTaskSelect,
+  onBulkComplete,
+  onBulkDelete,
+  onBulkMoveCategory,
   className = '' 
 }) => {
   const [filters, setFilters] = useState({
@@ -147,8 +154,28 @@ switch (sortBy) {
       setSortBy(field)
       setSortOrder('desc')
     }
+}
+
+  // Selection handlers
+  const handleTaskSelect = (taskId, selected) => {
+    if (selected) {
+      onTaskSelect([...selectedTasks, taskId])
+    } else {
+      onTaskSelect(selectedTasks.filter(id => id !== taskId))
+    }
   }
 
+  const handleSelectAll = (selected) => {
+    if (selected) {
+      onTaskSelect(filteredAndSortedTasks.map(task => task.Id))
+    } else {
+      onTaskSelect([])
+    }
+  }
+
+  const isAllSelected = filteredAndSortedTasks.length > 0 && 
+    filteredAndSortedTasks.every(task => selectedTasks.includes(task.Id))
+  const isPartiallySelected = selectedTasks.length > 0 && !isAllSelected
   if (loading) {
     return <Loading />
   }
@@ -171,16 +198,30 @@ switch (sortBy) {
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Header with Sort Options */}
+{/* Header with Sort Options */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold font-display text-gray-900">
-            {getCategoryName(activeCategory)}
-          </h2>
-          <p className="text-sm text-gray-600 mt-1">
-            {filteredAndSortedTasks.length} {filteredAndSortedTasks.length === 1 ? 'task' : 'tasks'}
-            {searchQuery && ` matching "${searchQuery}"`}
-          </p>
+        <div className="flex items-center space-x-4">
+          <div>
+            <h2 className="text-2xl font-bold font-display text-gray-900">
+              {getCategoryName(activeCategory)}
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              {filteredAndSortedTasks.length} {filteredAndSortedTasks.length === 1 ? 'task' : 'tasks'}
+              {searchQuery && ` matching "${searchQuery}"`}
+              {selectedTasks.length > 0 && ` • ${selectedTasks.length} selected`}
+            </p>
+          </div>
+          
+          {filteredAndSortedTasks.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                checked={isAllSelected}
+                onChange={handleSelectAll}
+                label="Select All"
+                className={isPartiallySelected ? 'bg-primary-200 border-primary-400' : ''}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -222,8 +263,20 @@ switch (sortBy) {
         filters={filters}
         onFilterChange={setFilters}
         onClearFilters={handleClearFilters}
-      />
+/>
 
+      {/* Bulk Actions Toolbar */}
+      {selectedTasks.length > 0 && (
+        <BulkActionsToolbar
+          selectedCount={selectedTasks.length}
+          categories={categories}
+          onComplete={() => onBulkComplete(selectedTasks, true)}
+          onMarkPending={() => onBulkComplete(selectedTasks, false)}
+          onDelete={() => onBulkDelete(selectedTasks)}
+          onMoveCategory={(categoryId) => onBulkMoveCategory(selectedTasks, categoryId)}
+          onCancel={() => onTaskSelect([])}
+        />
+      )}
       {/* Task List */}
       {filteredAndSortedTasks.length === 0 ? (
         <Empty
@@ -256,12 +309,14 @@ switch (sortBy) {
                 transition={{ delay: index * 0.05 }}
                 className="group"
               >
-                <TaskCard
+<TaskCard
                   task={task}
                   category={getCategoryById(task.categoryId)}
                   onUpdate={onTaskUpdate}
                   onDelete={onTaskDelete}
                   onComplete={onTaskComplete}
+                  selected={selectedTasks.includes(task.Id)}
+                  onSelect={(selected) => handleTaskSelect(task.Id, selected)}
                 />
               </motion.div>
             ))}
