@@ -1,0 +1,114 @@
+{
+  "mockTasks": [
+    {
+      "Id": 1,
+      "title": "Complete project proposal",
+      "description": "Draft and finalize the Q4 project proposal for the marketing campaign",
+      "categoryId": 1,
+      "priority": "high",
+      "dueDate": "2024-01-15T09:00:00Z",
+      "completed": false,
+      "createdAt": "2024-01-10T08:30:00Z",
+      "order": 0
+    },
+    {
+      "Id": 2,
+      "title": "Team standup meeting",
+      "description": "Daily standup with the development team to discuss progress and blockers",
+      "categoryId": 1,
+      "priority": "medium",
+      "dueDate": "2024-01-12T10:00:00Z",
+      "completed": true,
+      "createdAt": "2024-01-10T09:15:00Z",
+      "order": 1
+    },
+    {
+      "Id": 3,
+      "title": "Review code changes",
+      "description": "Review pull requests for the authentication module",
+      "categoryId": 1,
+      "priority": "medium",
+      "dueDate": "2024-01-13T14:00:00Z",
+      "completed": false,
+      "createdAt": "2024-01-10T10:00:00Z",
+      "order": 2
+    },
+    {
+      "Id": 4,
+      "title": "Grocery shopping",
+      "description": "Buy ingredients for this week's meal prep",
+      "categoryId": 2,
+      "priority": "low",
+      "dueDate": "2024-01-13T18:00:00Z",
+      "completed": false,
+      "createdAt": "2024-01-10T11:30:00Z",
+      "order": 3
+    },
+    {
+      "Id": 5,
+      "title": "Call dentist",
+      "description": "Schedule appointment for teeth cleaning",
+      "categoryId": 2,
+      "priority": "medium",
+      "dueDate": "2024-01-14T16:00:00Z",
+      "completed": true,
+      "createdAt": "2024-01-10T12:00:00Z",
+      "order": 4
+    },
+    {
+      "Id": 6,
+      "title": "Workout session",
+      "description": "45-minute cardio and strength training",
+      "categoryId": 3,
+      "priority": "medium",
+      "dueDate": "2024-01-12T07:00:00Z",
+      "completed": true,
+      "createdAt": "2024-01-10T13:00:00Z",
+      "order": 5
+    },
+    {
+      "Id": 7,
+      "title": "Read 30 pages of book",
+      "description": "Continue reading 'Atomic Habits' by James Clear",
+      "categoryId": 3,
+      "priority": "low",
+      "dueDate": "2024-01-12T21:00:00Z",
+      "completed": false,
+      "createdAt": "2024-01-10T14:15:00Z",
+      "order": 6
+    },
+    {
+      "Id": 8,
+      "title": "Update portfolio website",
+      "description": "Add recent projects and update skills section",
+      "categoryId": 1,
+      "priority": "low",
+      "dueDate": "2024-01-20T12:00:00Z",
+      "completed": false,
+      "createdAt": "2024-01-10T15:30:00Z",
+      "order": 7
+    },
+    {
+      "Id": 9,
+      "title": "Plan weekend trip",
+      "description": "Research destinations and book accommodation",
+      "categoryId": 2,
+      "priority": "low",
+      "dueDate": "2024-01-18T20:00:00Z",
+      "completed": false,
+      "createdAt": "2024-01-10T16:45:00Z",
+      "order": 8
+    },
+    {
+      "Id": 10,
+      "title": "Morning meditation",
+      "description": "10-minute mindfulness meditation",
+      "categoryId": 3,
+      "priority": "medium",
+      "dueDate": "2024-01-12T06:30:00Z",
+      "completed": true,
+      "createdAt": "2024-01-10T17:00:00Z",
+      "order": 9
+    }
+  ]
+}
